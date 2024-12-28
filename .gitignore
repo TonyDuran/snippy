@@ -30,3 +30,27 @@
 *.exe
 *.out
 *.app
+
+
+# Build directories
+build/
+*.o
+
+# Compiled binary files
+snippy
+test_snippy
+
+# Debugger files
+*.dSYM/
+*.core
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+*~
+
