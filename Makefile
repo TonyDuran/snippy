@@ -1,19 +1,24 @@
+# Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++14 -Wall -Wextra -Werror -I/opt/homebrew/include
-LDFLAGS = -L/opt/homebrew/lib -lgtest -lgtest_main -lpthread
+
+# Directories
 SRCDIR = src
 BUILDDIR = build
 TESTDIR = tests
+INCDIR = include
 
-SRC = $(wildcard $(SRCDIR)/**/*.cpp $(SRCDIR)/*.cpp)
+# Files
+SRC = $(SRCDIR)/main.cpp
+TESTSRC = $(TESTDIR)/*.cpp
 OBJ = $(SRC:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
+TESTOBJ = $(TESTSRC:%.cpp=$(BUILDDIR)/%.o)
 
-TESTSRC = $(wildcard $(TESTDIR)/*.cpp)
-TESTOBJ = $(TESTSRC:$(TESTDIR)/%.cpp=$(BUILDDIR)/%.o)
-
+# Targets
 TARGET = snippy
-TEST_TARGET = test_snippy
+TESTTARGET = test_snippy
 
+# Main application build
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
@@ -21,19 +26,19 @@ $(TARGET): $(OBJ)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(INCDIR) -c $< -o $@
 
-test: $(TEST_TARGET)
+# Test build (exclude main.cpp)
+test: $(TESTTARGET)
 
-$(TEST_TARGET): $(OBJ) $(TESTOBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+$(TESTTARGET): $(TESTOBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^ -L/opt/homebrew/lib -lgtest -lgtest_main -lpthread
 
 $(BUILDDIR)/%.o: $(TESTDIR)/%.cpp
 	mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -I$(SRCDIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(INCDIR) -c $< -o $@
 
 clean:
-	rm -rf $(BUILDDIR) $(TARGET) $(TEST_TARGET)
+	rm -rf $(BUILDDIR) $(TARGET) $(TESTTARGET)
 
-.PHONY: all clean test
-
+.PHONY: all test clean
